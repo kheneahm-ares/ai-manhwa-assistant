@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - devnet
+      
+  pgadmin:
+    image: dpage/pgadmin4:7
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    environment:
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin-servers.json:/pgadmin4/servers.json # Mount the servers.json file, auto configure servers
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+
+volumes:
+  db_data:
+  pgadmin_data:
+
+networks:
+  devnet:

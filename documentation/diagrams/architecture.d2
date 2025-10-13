@@ -1,0 +1,305 @@
+title: {
+  label: "Production Network Architecture - Manhwa Reading Assistant"
+  near: top-center
+  style: {
+    font-size: 20
+    bold: true
+  }
+}
+
+# External Layer
+internet: "🌐 Internet\nUser Traffic" {
+  style.fill: "#667eea"
+  style.font-color: white
+}
+
+# Edge Infrastructure
+edge: {
+  label: "Edge Infrastructure"
+  style.fill: "#f093fb"
+  style.stroke: "#f093fb"
+
+  cdn: "🌍 CDN\nCloudFront/CloudFlare\nStatic Assets" {
+    style.fill: "#f093fb"
+    style.font-color: white
+  }
+
+  waf: "🛡️ WAF\nDDoS Protection\nGeo-blocking" {
+    style.fill: "#f093fb"
+    style.font-color: white
+  }
+
+  lb: "⚖️ Load Balancer\nSSL Termination\nHealth Checks" {
+    style.fill: "#f093fb"
+    style.font-color: white
+  }
+}
+
+# Kubernetes Cluster
+k8s: {
+  label: "Kubernetes Cluster (AKS/EKS/GKE)"
+  style.fill: "#e6f3ff"
+  style.stroke: "#0066cc"
+  style.stroke-width: 3
+
+  # Public Subnet - DMZ
+  public_subnet: {
+    label: "Public Subnet (10.0.1.0/24) - DMZ"
+    style.fill: "#4facfe"
+    style.stroke: "#4facfe"
+    style.stroke-dash: 5
+
+    ingress: "🚪 NGINX Ingress\nTLS Termination\nPath-based Routing\nSticky Sessions" {
+      style.fill: "#4facfe"
+      style.font-color: white
+    }
+
+    api_gateway: "🔐 API Gateway\nKong/Ambassador\nRate Limiting\nAuthentication" {
+      style.fill: "#4facfe"
+      style.font-color: white
+    }
+  }
+
+  # Private Subnet - Application Tier
+  private_subnet: {
+    label: "Private Subnet (10.0.2.0/24) - Application Tier"
+    style.fill: "#43e97b"
+    style.stroke: "#43e97b"
+    style.stroke-dash: 5
+
+    service_mesh: "🕸️ Service Mesh\nIstio/Linkerd\nmTLS • Circuit Breaking\nTraffic Management" {
+      style.fill: "#38a169"
+      style.font-color: white
+    }
+
+    # Frontend Layer
+    bff: "⚡ Next.js BFF\n3 Replicas\nPort: 3000\nSession Management" {
+      style.fill: "#68d391"
+    }
+
+    # Microservices
+    services: {
+      label: "Microservices"
+      style.fill: "#68d391"
+
+      user_svc: "👤 User Management\n.NET Core 8\n3 Replicas\nPort: 5001" {
+        style.fill: "#68d391"
+      }
+
+      progress_svc: "📊 Reading Progress\n.NET Core 8\n3 Replicas\nPort: 5002" {
+        style.fill: "#68d391"
+      }
+
+      content_svc: "📚 Content Service\nFastAPI Python\n3 Replicas\nPort: 8000" {
+        style.fill: "#68d391"
+      }
+
+      ai_svc: "🤖 AI/ML Service\nFastAPI Python\n3 Replicas\nPort: 8001" {
+        style.fill: "#68d391"
+      }
+
+      notify_svc: "📧 Notification\n.NET Core 8\n2 Replicas\nPort: 5003" {
+        style.fill: "#68d391"
+      }
+
+      analytics_svc: "📈 Analytics\nPython\n2 Replicas\nPort: 8002" {
+        style.fill: "#68d391"
+      }
+    }
+  }
+
+  # Database Subnet - Data Tier
+  database_subnet: {
+    label: "Database Subnet (10.0.3.0/24) - Data Tier"
+    style.fill: "#fa709a"
+    style.stroke: "#fa709a"
+    style.stroke-dash: 5
+
+    # SQL Databases
+    postgres: {
+      label: "PostgreSQL HA"
+      style.fill: "#336791"
+      style.font-color: white
+
+      pg_primary: "🐘 Primary\nPort: 5432\nUsers & Progress" {
+        style.fill: "#336791"
+        style.font-color: white
+      }
+
+      pg_standby: "🐘 Standby\nPort: 5433\nRead Replica" {
+        style.fill: "#336791"
+        style.font-color: white
+      }
+    }
+
+    # Cache Layer
+    redis_cluster: "🔴 Redis Cluster\n6 Nodes\nPorts: 6379-6384\nCache & Sessions" {
+      style.fill: "#dc382d"
+      style.font-color: white
+    }
+
+    # Document Database
+    mongodb: "🍃 MongoDB\nReplica Set\nPrimary: 27017\nSecondary: 27018" {
+      style.fill: "#47a248"
+      style.font-color: white
+    }
+
+    # Search Engine
+    elasticsearch: "🔍 Elasticsearch\n3 Node Cluster\nPort: 9200\nSearch & Analytics" {
+      style.fill: "#005571"
+      style.font-color: white
+    }
+  }
+
+  # Messaging Subnet
+  messaging_subnet: {
+    label: "Messaging Subnet (10.0.4.0/24)"
+    style.fill: "#a78bfa"
+    style.stroke: "#a78bfa"
+    style.stroke-dash: 5
+
+    rabbitmq: "🐰 RabbitMQ\n3 Node Cluster\nAMQP: 5672\nMgmt: 15672" {
+      style.fill: "#ff6600"
+      style.font-color: white
+    }
+
+    kafka: "📨 Apache Kafka\n3 Brokers\nPort: 9092\nEvent Streaming" {
+      style.fill: "#231f20"
+      style.font-color: white
+    }
+  }
+
+  # Monitoring Subnet
+  monitoring_subnet: {
+    label: "Monitoring Subnet (10.0.5.0/24)"
+    style.fill: "#a8edea"
+    style.stroke: "#a8edea"
+    style.stroke-dash: 5
+
+    prometheus: "📊 Prometheus\nHA Setup\nPort: 9090\nMetrics Collection" {
+      style.fill: "#e6522c"
+      style.font-color: white
+    }
+
+    grafana: "📈 Grafana\nPort: 3000\nDashboards\nAlerting" {
+      style.fill: "#f46800"
+      style.font-color: white
+    }
+
+    jaeger: "🔍 Jaeger\nPort: 16686\nDistributed Tracing" {
+      style.fill: "#60d0e4"
+    }
+
+    elk: "📋 ELK Stack\nElastic: 9200\nLogstash: 5044\nKibana: 5601" {
+      style.fill: "#005571"
+      style.font-color: white
+    }
+  }
+}
+
+# External Services
+external_apis: "🌐 External APIs\nAniList GraphQL\nMangaDx REST\nOAuth Providers" {
+  style.fill: "#fbb6ce"
+  style.stroke: "#b83280"
+}
+
+# Network Flow Connections
+internet -> edge.cdn: "Static Assets"
+internet -> edge.waf: "Application Traffic"
+edge.cdn -> edge.lb
+edge.waf -> edge.lb
+edge.lb -> k8s.public_subnet.ingress: "HTTPS/443"
+
+k8s.public_subnet.ingress -> k8s.public_subnet.api_gateway
+k8s.public_subnet.api_gateway -> k8s.private_subnet.service_mesh
+
+# Service Mesh to Applications
+k8s.private_subnet.service_mesh -> k8s.private_subnet.bff
+k8s.private_subnet.bff -> k8s.private_subnet.services.user_svc: "HTTP/5001"
+k8s.private_subnet.bff -> k8s.private_subnet.services.progress_svc: "HTTP/5002"
+k8s.private_subnet.bff -> k8s.private_subnet.services.content_svc: "HTTP/8000"
+k8s.private_subnet.bff -> k8s.private_subnet.services.ai_svc: "HTTP/8001"
+
+# Service to Database Connections
+k8s.private_subnet.services.user_svc -> k8s.database_subnet.postgres.pg_primary: "TCP/5432"
+k8s.private_subnet.services.progress_svc -> k8s.database_subnet.postgres.pg_primary: "TCP/5432"
+k8s.private_subnet.services.progress_svc -> k8s.database_subnet.redis_cluster: "TCP/6379"
+
+k8s.private_subnet.services.content_svc -> k8s.database_subnet.mongodb: "TCP/27017"
+k8s.private_subnet.services.content_svc -> k8s.database_subnet.elasticsearch: "HTTP/9200"
+k8s.private_subnet.services.content_svc -> external_apis: "HTTPS/443"
+
+k8s.private_subnet.services.ai_svc -> k8s.database_subnet.mongodb: "TCP/27017"
+k8s.private_subnet.services.ai_svc -> k8s.database_subnet.redis_cluster: "TCP/6379"
+
+k8s.private_subnet.services.notify_svc -> k8s.messaging_subnet.rabbitmq: "TCP/5672"
+k8s.private_subnet.services.analytics_svc -> k8s.database_subnet.elasticsearch: "HTTP/9200"
+
+# Database Replication
+k8s.database_subnet.postgres.pg_primary -> k8s.database_subnet.postgres.pg_standby: "Streaming Replication" {
+  style.stroke-dash: 3
+  style.stroke: "#336791"
+}
+
+# Event-Driven Architecture
+k8s.private_subnet.services.user_svc -> k8s.messaging_subnet.kafka: "Events"
+k8s.private_subnet.services.progress_svc -> k8s.messaging_subnet.kafka: "Events"
+k8s.private_subnet.services.content_svc -> k8s.messaging_subnet.kafka: "Events"
+k8s.messaging_subnet.kafka -> k8s.private_subnet.services.analytics_svc: "Events"
+k8s.messaging_subnet.kafka -> k8s.private_subnet.services.notify_svc: "Events"
+
+# Monitoring Connections
+k8s.private_subnet.service_mesh -> k8s.monitoring_subnet.prometheus: "Metrics" {
+  style.stroke-dash: 5
+  style.stroke: "#666"
+}
+k8s.private_subnet.services.user_svc -> k8s.monitoring_subnet.prometheus: "Metrics" {
+  style.stroke-dash: 5
+  style.stroke: "#666"
+}
+k8s.private_subnet.services.progress_svc -> k8s.monitoring_subnet.prometheus: "Metrics" {
+  style.stroke-dash: 5
+  style.stroke: "#666"
+}
+k8s.private_subnet.services.content_svc -> k8s.monitoring_subnet.prometheus: "Metrics" {
+  style.stroke-dash: 5
+  style.stroke: "#666"
+}
+k8s.private_subnet.services.ai_svc -> k8s.monitoring_subnet.prometheus: "Metrics" {
+  style.stroke-dash: 5
+  style.stroke: "#666"
+}
+
+k8s.monitoring_subnet.prometheus -> k8s.monitoring_subnet.grafana: "PromQL"
+k8s.private_subnet.service_mesh -> k8s.monitoring_subnet.jaeger: "Traces" {
+  style.stroke-dash: 5
+  style.stroke: "#60d0e4"
+}
+
+# Network Security Legend
+legend: {
+  label: "Network Security & Subnets"
+  near: bottom-right
+  style.fill: "#f7fafc"
+  style.stroke: "#2d3748"
+
+  public: "🌐 Public Subnet (10.0.1.0/24)\nInternet-facing components only" {
+    style.fill: "#4facfe"
+  }
+
+  private: "🏢 Private Subnet (10.0.2.0/24)\nApplication tier - no direct internet" {
+    style.fill: "#43e97b"
+  }
+
+  database: "🗄️ Database Subnet (10.0.3.0/24)\nData tier - app access only" {
+    style.fill: "#fa709a"
+  }
+
+  messaging: "🔄 Messaging Subnet (10.0.4.0/24)\nEvent streaming & queues" {
+    style.fill: "#a78bfa"
+  }
+
+  monitoring: "📊 Monitoring Subnet (10.0.5.0/24)\nObservability stack" {
+    style.fill: "#a8edea"
+  }
+}

@@ -1,0 +1,23 @@
+### Register User
+POST https://localhost:7100/api/auth/register
+Content-Type: application/json
+
+{
+  "Email": "test@example.com",
+  "DisplayName": "i am a test user",
+  "Password": "Test123!",
+  "ConfirmPassword": "Test123!"
+}
+
+### Login User
+POST https://localhost:7100/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test123!"
+}
+
+### Get User Profile (add JWT token after login)
+GET https://localhost:7001/api/users/profile
+Authorization: Bearer {{authToken}}

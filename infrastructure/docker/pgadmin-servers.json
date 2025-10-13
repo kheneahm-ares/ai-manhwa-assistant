@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Local Dev",
+      "Group": "Development",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "manhwa-assistant-usermanagement",
+      "Username": "devuser",
+      "SSLMode": "prefer",
+      "PassFile": "/pgpass"
+    }
+  }
+}
