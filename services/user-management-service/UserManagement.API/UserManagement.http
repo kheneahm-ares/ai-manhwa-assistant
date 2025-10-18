@@ -1,5 +1,8 @@
+@baseUrl = https://localhost:7100/api
+@token = {{login.response.body.$.accessToken}}
+
 ### Register User
-POST https://localhost:7100/api/auth/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -10,7 +13,8 @@ Content-Type: application/json
 }
 
 ### Login User
-POST https://localhost:7100/api/auth/login
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -19,5 +23,5 @@ Content-Type: application/json
 }
 
 ### Get User Profile (add JWT token after login)
-GET https://localhost:7001/api/users/profile
-Authorization: Bearer {{authToken}}
+GET {{baseUrl}}/users/email?email=test@example.com
+Authorization: Bearer {{token}}

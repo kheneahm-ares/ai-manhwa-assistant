@@ -24,8 +24,8 @@ namespace UserManagement.API.Endpoints
         {
             var result = await authService.LoginUser(user);
 
-            if (result)
-                return Results.Ok(new { Message = "User logged in successfully." });
+            if (!string.IsNullOrEmpty(result))
+                return Results.Ok(new { accessToken = result });
             return Results.BadRequest(new { Message = "User login failed." });
         }
     }
