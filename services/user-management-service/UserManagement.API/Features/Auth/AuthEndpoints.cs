@@ -1,4 +1,4 @@
-﻿using UserManagement.API.Services.Auth;
+﻿using UserManagement.API.Features.Auth;
 
 namespace UserManagement.API.Endpoints
 {

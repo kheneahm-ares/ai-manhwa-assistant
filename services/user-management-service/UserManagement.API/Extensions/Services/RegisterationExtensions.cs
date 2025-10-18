@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
-using UserManagement.API.Services.Auth;
-using UserManagement.API.Services.User;
+using UserManagement.API.Features.Auth;
+using UserManagement.API.Features.User;
 
 namespace UserManagement.API.Extensions.Services
 {
-    public static class RegistationExtensions
+    public static class RegisterationExtensions
     {
         // Add application services
-        public static IServiceCollection AddRegistationServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddRegisterationExtensions(this IServiceCollection services, IConfiguration configuration)
         {
             // registrations
             services.AddScoped<IValidator<RegisterUserDTO>, RegisterUserValidator>();

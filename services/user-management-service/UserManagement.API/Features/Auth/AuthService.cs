@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using UserManagement.Data;
 
-namespace UserManagement.API.Services.Auth
+namespace UserManagement.API.Features.Auth
 {
     public class AuthService
     {

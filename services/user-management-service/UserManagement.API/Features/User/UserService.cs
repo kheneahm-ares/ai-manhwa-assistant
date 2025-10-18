@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using UserManagement.Data;
 
-namespace UserManagement.API.Services.User
+namespace UserManagement.API.Features.User
 {
     public class UserService
     {

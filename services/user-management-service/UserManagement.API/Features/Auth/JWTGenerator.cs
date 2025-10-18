@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace UserManagement.API.Services.Auth
+namespace UserManagement.API.Features.Auth
 {
     public interface IJWTGenerator
     {

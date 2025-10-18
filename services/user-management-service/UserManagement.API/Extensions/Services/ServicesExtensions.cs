@@ -1,13 +1,7 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore; // transitive from npgsql
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserManagement.API.Extensions.Services;
-using UserManagement.API.Services.Auth;
-using UserManagement.API.Services.User;
 using UserManagement.Data;
 
 namespace UserManagement.API.Extensions
@@ -36,7 +30,7 @@ namespace UserManagement.API.Extensions
                 .AddDefaultTokenProviders();
 
             services.AddAuthServices(configuration);
-            services.AddRegistationServices(configuration);
+            services.AddRegisterationExtensions(configuration);
 
             return services;
         }

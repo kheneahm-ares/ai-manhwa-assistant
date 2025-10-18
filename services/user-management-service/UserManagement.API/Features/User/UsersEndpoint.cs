@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UserManagement.API.Services.User;
+using UserManagement.API.Features.User;
 
 namespace UserManagement.API.Endpoints
 {

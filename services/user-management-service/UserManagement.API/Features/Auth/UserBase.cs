@@ -1,4 +1,4 @@
-﻿namespace UserManagement.API.Services.Auth
+﻿namespace UserManagement.API.Features.Auth
 {
     public abstract class UserBase
     {
