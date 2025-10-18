@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace UserManagement.API.Services.Auth
+namespace UserManagement.API.Features.Auth
 {
     public class RegisterUserValidator : AbstractValidator<RegisterUserDTO>
     {
