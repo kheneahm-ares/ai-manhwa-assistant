@@ -13,7 +13,7 @@ namespace UserManagement.API.Extensions.Services
             services.AddScoped<IValidator<RegisterUserDTO>, RegisterUserValidator>();
             services.AddScoped<IJWTGenerator, SymmetricJWTGenerator>();
             services.AddScoped<AuthService>();
-            services.AddScoped<UserService>();
+            services.AddScoped<UsersService>();
 
             return services;
         }
