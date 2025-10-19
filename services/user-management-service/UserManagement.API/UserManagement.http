@@ -23,9 +23,9 @@ Content-Type: application/json
 }
 
 ### Get User Profile (add JWT token after login)
-GET {{baseUrl}}/users/test@example.com
+GET {{baseUrl}}/users
 Authorization: Bearer {{token}}
 
 ### Update User display name (add JWT token after login)
-PUT {{baseUrl}}/users/test@example.com?displayName=Updatedddd%20Test%20User
+PUT {{baseUrl}}/users?displayName=Updatedddd%20Test%20Userssdf
 Authorization: Bearer {{token}}

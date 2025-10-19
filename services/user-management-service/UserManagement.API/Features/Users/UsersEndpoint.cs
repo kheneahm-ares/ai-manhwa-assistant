@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserManagement.API.Features.User;
 
 namespace UserManagement.API.Endpoints
@@ -8,17 +9,25 @@ namespace UserManagement.API.Endpoints
         public static RouteGroupBuilder MapUsersEndpoints(this RouteGroupBuilder group)
         {
             // map get user by email
-            group.MapGet("{email}", GetUserByEmail);
+            group.MapGet("", GetUserByEmail);
             // map update display name
-            group.MapPut("{email}", UpdateUser);
+            group.MapPut("", UpdateUser);
 
             return group;
         }
 
-        private static async Task<IResult> GetUserByEmail([FromRoute] string email, 
-                                                         [FromServices] UsersService userService)
+        private static async Task<IResult> GetUserByEmail([FromServices] UsersService userService,
+                                                           ClaimsPrincipal userClaims)
         {
-            var user = await userService.GetUserByEmailAsync(email);
+            var userEmail = userClaims.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Results.Unauthorized();
+            }
+
+            var user = await userService.GetUserByEmailAsync(userEmail);
+
             if (user != null)
             {
                 return Results.Ok(new
@@ -32,11 +41,18 @@ namespace UserManagement.API.Endpoints
         }
 
         // update user for now just updates display name
-        private static async Task<IResult> UpdateUser([FromRoute] string email,
-                                                            [FromQuery(Name = "displayName")] string newDisplayName,
-                                                            [FromServices] UsersService userService)
+        private static async Task<IResult> UpdateUser([FromQuery(Name = "displayName")] string newDisplayName,
+                                                            [FromServices] UsersService userService,
+                                                            ClaimsPrincipal userClaims)
         {
-            var result = await userService.UpdateDisplayNameAsync(email, newDisplayName);
+            var userEmail = userClaims.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Results.Unauthorized();
+            }
+
+            var result = await userService.UpdateDisplayNameAsync(userEmail, newDisplayName);
             if (result)
             {
                 return Results.Ok(new { Message = "Display name updated successfully." });
