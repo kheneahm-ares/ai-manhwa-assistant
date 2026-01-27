@@ -27,5 +27,10 @@ GET {{baseUrl}}/users
 Authorization: Bearer {{token}}
 
 ### Update User display name (add JWT token after login)
-PUT {{baseUrl}}/users?displayName=Updatedddd%20Test%20Userssdf
+PUT {{baseUrl}}/users
 Authorization: Bearer {{token}}
+Content-Type: application/json
+{
+  "displayName": "updated test user"
+}
+  

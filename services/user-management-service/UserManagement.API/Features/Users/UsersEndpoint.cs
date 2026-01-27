@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserManagement.API.Features.User;
+using UserManagement.API.Features.Users.DTOs;
 
 namespace UserManagement.API.Endpoints
 {
@@ -41,7 +42,7 @@ namespace UserManagement.API.Endpoints
         }
 
         // update user for now just updates display name
-        private static async Task<IResult> UpdateUser([FromQuery(Name = "displayName")] string newDisplayName,
+        private static async Task<IResult> UpdateUser([FromBody] UpdateUserDTO updateUserDTO,
                                                             [FromServices] UsersService userService,
                                                             ClaimsPrincipal userClaims)
         {
@@ -52,7 +53,7 @@ namespace UserManagement.API.Endpoints
                 return Results.Unauthorized();
             }
 
-            var result = await userService.UpdateDisplayNameAsync(userEmail, newDisplayName);
+            var result = await userService.UpdateDisplayNameAsync(userEmail, updateUserDTO.DisplayName);
             if (result)
             {
                 return Results.Ok(new { Message = "Display name updated successfully." });
