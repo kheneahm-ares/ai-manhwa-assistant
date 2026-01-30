@@ -6,60 +6,179 @@ The Manhwa Reading Assistant implements a microservices architecture with Backen
 
 ## Technology Stack by Service
 
-### 1. Next.js BFF Service (Frontend Aggregation Layer)
+
+### 1. React Router 7 BFF Service (Thin Backend for Frontend)
 
 **Core Technologies:**
-- **Framework**: Next.js 14+ with App Router and Server Components
+- **Framework**: React Router 7 (Remix) with server-side loaders and actions
 - **Language**: TypeScript 5.0+ with strict configuration
 - **Runtime**: Node.js 20+ LTS with performance optimizations
-- **Authentication**: NextAuth.js v5 with OAuth 2.0 providers (Google, Discord, GitHub)
-- **Server State Management**: TanStack Query (React Query) v5 for intelligent server state caching and synchronization
-- **HTTP Client**: Native fetch with retry logic and request deduplication
+- **Authentication**: Custom JWT handling with cookie-based sessions
+- **Server State Management**: TanStack Query (React Query) v5 for client-side caching and synchronization
+- **HTTP Client**: fetch API with custom retry logic and timeout handling
 - **Validation**: Zod v3 for request/response schema validation
+- **Deployment**: Standalone Node.js server deployable to AKS
 
 **Key Responsibilities:**
-- Session management and authentication proxy for all services
-- Request aggregation and orchestration from multiple microservices
-- Client-specific data transformation and caching with TanStack Query
-- Intelligent server state management with automatic cache invalidation
-- Optimistic UI updates for real-time progress tracking
-- Error normalization and user-friendly error handling with automatic retries
-- Static asset serving and SEO optimization for content pages
-- Rate limiting coordination for external API calls
+- **Thin BFF orchestration layer**: Each route loader aggregates data from multiple microservices
+- Session management and JWT validation on server-side loaders
+- Data transformation and normalization for frontend consumption
+- Authentication proxy - hiding service tokens from client
+- Error boundary handling and user-friendly error messages
+- SEO optimization through server-side rendering
+- Route-level service orchestration with explicit data fetching
+
+**BFF Orchestration Pattern:**
+React Router 7 loaders serve as explicit BFF endpoints - each route defines exactly which microservices to call and how to aggregate their responses.
+
+```typescript
+// app/routes/manhwa.$id.tsx - Route loader as BFF orchestration point
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  // Authenticate request and extract user context
+  const userId = await authenticateRequest(request);
+  const manhwaId = params.id;
+  
+  // Orchestrate multiple microservices in parallel
+  const [metadata, userProgress, recommendations] = await Promise.all([
+    contentService.getManhwa(manhwaId),
+    progressService.getUserProgress(userId, manhwaId),
+    mlService.getSimilarManhwa(manhwaId, userId)
+  ]);
+  
+  // Transform and aggregate for frontend
+  return json({
+    manhwa: metadata,
+    progress: userProgress,
+    similar: recommendations.slice(0, 10),
+    updatedAt: new Date().toISOString()
+  });
+}
+
+// app/routes/progress.update.tsx - Action as BFF mutation endpoint
+export async function action({ request }: ActionFunctionArgs) {
+  const userId = await authenticateRequest(request);
+  const formData = await request.formData();
+  
+  // Validate and orchestrate progress update
+  const updateData = progressSchema.parse({
+    manhwaId: formData.get('manhwaId'),
+    chapter: formData.get('chapter'),
+  });
+  
+  // Call progress service
+  await progressService.updateProgress(userId, updateData);
+  
+  // Trigger ML service to update recommendations
+  await mlService.triggerRecommendationRefresh(userId);
+  
+  return json({ success: true });
+}
+```
+
+**Authentication Layer:**
+```typescript
+// app/services/auth.server.ts
+export async function authenticateRequest(request: Request): Promise<string> {
+  const cookieHeader = request.headers.get('Cookie');
+  const token = extractJwtFromCookie(cookieHeader);
+  
+  if (!token) throw redirect('/login');
+  
+  const payload = await verifyJwt(token);
+  return payload.userId;
+}
+
+// OAuth integration with external providers
+export async function handleOAuthCallback(
+  provider: 'google' | 'discord' | 'github',
+  code: string
+): Promise<{ token: string; user: User }> {
+  // Exchange code for tokens with provider
+  // Call User Management Service to create/login user
+  // Return JWT for session
+}
+```
+
+**Microservice Client Layer:**
+```typescript
+// app/services/microservices.server.ts
+class MicroserviceClient {
+  constructor(private baseUrl: string) {}
+  
+  async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new MicroserviceError(response.status, await response.text());
+    }
+    
+    return response.json();
+  }
+}
+
+export const contentService = new MicroserviceClient(process.env.CONTENT_SERVICE_URL);
+export const progressService = new MicroserviceClient(process.env.PROGRESS_SERVICE_URL);
+export const mlService = new MicroserviceClient(process.env.ML_SERVICE_URL);
+```
 
 **Production Configuration:**
 - **Port**: 3000
-- **Replicas**: 3 with session affinity via Redis
-- **Resource Limits**: 1Gi memory, 500m CPU
-- **Environment Variables**: OAuth secrets, service discovery endpoints, Redis connection
+- **Replicas**: 3 with sticky sessions via cookie-based routing
+- **Resource Limits**: 512Mi memory, 250m CPU (lighter than Next.js)
+- **Environment Variables**: JWT secret, OAuth client IDs/secrets, service discovery URLs
+- **Session Storage**: Redis for distributed session management
 
 **TanStack Query Configuration:**
-TanStack Query serves as the intelligent server state management layer, handling all data fetching, caching, and synchronization from backend microservices.
+TanStack Query handles client-side caching and optimistic updates. Server loaders provide initial data, TanStack Query manages subsequent client interactions.
 
 ```typescript
-// Global Query Client Configuration
+// app/root.tsx - Global Query Client setup
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes default cache
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
-      retry: 3, // Auto-retry failed requests
-      refetchOnWindowFocus: true, // Refetch when user returns to tab
-      refetchOnReconnect: true, // Refetch after network reconnection
+      staleTime: 5 * 60 * 1000, // 5 minutes - loaders provide fresh data
+      gcTime: 10 * 60 * 1000,
+      retry: 2,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
     },
     mutations: {
-      retry: 1, // Retry mutations once on failure
+      retry: 1,
+      onSuccess: () => {
+        // Invalidate relevant queries after mutations
+        queryClient.invalidateQueries();
+      },
     },
   },
 });
+```
+
+**Why React Router 7 as Thin BFF:**
+- **Explicit orchestration**: Each loader is a clear BFF endpoint with visible service calls
+- **No framework magic**: Direct control over caching, rendering, and data flow
+- **Simplified deployment**: Single Node.js container, no Vercel assumptions
+- **Clear mental model**: Loaders = server data fetching, components = client rendering
+- **Microservices-friendly**: Designed for delegating to backend services, not being the backend
+- **Performance**: Lighter than Next.js (no React Server Components overhead)
+- **AKS deployment**: Standard Node.js app, no platform-specific optimizations needed
 
 **Dependencies:**
 ```json
 {
-  "next": "^14.0.0",
-  "next-auth": "^5.0.0",
+  "@react-router/node": "^7.0.0",
+  "@react-router/serve": "^7.0.0",
+  "react-router": "^7.0.0",
+  "react": "^18.3.0",
+  "react-dom": "^18.3.0",
+  "@tanstack/react-query": "^5.0.0",
   "zod": "^3.22.4",
-  "@next/bundle-analyzer": "^14.0.0",
+  "jose": "^5.0.0",
   "redis": "^4.6.10"
 }
 ```

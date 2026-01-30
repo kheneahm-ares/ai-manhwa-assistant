@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The Manhwa Reading Assistant is an AI-powered tracking and discovery platform for Korean webtoons and manhwa, designed as a manhwa-optimized alternative to MyAnimeList. Built using enterprise-grade microservices architecture with Next.js BFF pattern, the platform addresses critical gaps in existing tracking solutions through intelligent recommendations, smart content discovery, AI-powered summaries, and manhwa-specific optimization.
+The Manhwa Reading Assistant is an AI-powered tracking and discovery platform for Korean webtoons and manhwa, designed as a manhwa-optimized alternative to MyAnimeList. Built using enterprise-grade microservices architecture with React Router 7 BFF pattern, the platform addresses critical gaps in existing tracking solutions through intelligent recommendations, smart content discovery, AI-powered summaries, and manhwa-specific optimization.
 
 **Key Distinction**: This is a tracking and management platform, not a reading platform. Users read manhwa on existing platforms (Webtoon, Tapas, MangaDx, etc.) and use our app to track progress, discover content, and manage their reading experience.
 
@@ -51,7 +51,7 @@ Current manhwa tracking platforms suffer from systematic deficiencies that creat
    - Cultural context explanations for Korean references
 
 ### System Design Principles
-- **Backend for Frontend (BFF) Pattern** - Next.js handling client-specific data aggregation
+- **Backend for Frontend (BFF) Pattern** - React Router 7 loaders handling client-specific data aggregation
 - **Domain-Driven Microservices** - Clear service boundaries based on business capabilities
 - **Event-Driven Architecture** - Asynchronous communication for loose coupling and scalability
 - **AI-First Design** - Machine learning integration across all core features

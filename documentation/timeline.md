@@ -46,17 +46,17 @@
 - [ ] **Performance Optimization**: Implement efficient queries and batch update capabilities
 
 **Week 3-4: Frontend BFF Layer**
-- [ ] **Next.js Setup**: Initialize Next.js 14 project with App Router and TypeScript
-- [ ] **Authentication Integration**: Implement NextAuth.js with JWT provider for microservices
-- [ ] **Service Integration**: Create API routes for user management and progress services
+- [ ] **React Router 7 Setup**: Initialize React Router 7 project with TypeScript and file-based routing
+- [ ] **Authentication Integration**: Implement custom JWT authentication with cookie-based sessions for microservices
+- [ ] **Service Integration**: Create loader functions for user management and progress services
 - [ ] **User Interface**: Build responsive dashboard showing reading progress and statistics  
-- [ ] **Real-time Updates**: Implement WebSocket connections for live progress synchronization
+- [ ] **TanStack Query Setup**: Implement client-side caching with automatic query invalidation
 - [ ] **Mobile Optimization**: Ensure mobile-first design with touch-optimized progress updates
 - [ ] **Error Handling**: Add comprehensive error boundaries and user-friendly error messages
 
 **Deliverables Month 2:**
 - Cross-device reading progress synchronization with conflict resolution
-- Responsive Next.js frontend with real-time progress updates
+- Responsive React Router 7 frontend with explicit BFF orchestration in loaders
 - Mobile-optimized interface designed for quick progress tracking
 - Integration testing covering end-to-end user workflows
 
@@ -87,7 +87,7 @@
 - Performance-optimized system with sub-200ms response times for core operations
 
 **Phase 1 Success Criteria:**
-- Complete user lifecycle: registration → content discovery → progress tracking → cross-device sync
+- Complete user lifecycle: registration â†’ content discovery â†’ progress tracking â†’ cross-device sync
 - All services deployable to Minikube with monitoring and health checks
 - API response times under 200ms for core operations
 - Mobile-optimized interface with responsive design
