@@ -1,0 +1,30 @@
+# Build stage (shared)
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+COPY ["UserManagement.API/UserManagement.API.csproj", "UserManagement.API/"]
+RUN dotnet restore "UserManagement.API/UserManagement.API.csproj"
+COPY . .
+WORKDIR "/src/UserManagement.API"
+RUN dotnet build "UserManagement.API.csproj" -c Release -o /app/build
+RUN dotnet publish "UserManagement.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+
+# MULTI STAGE APPROACH BUT NOT ALL STAGES SHOULD BE RAN
+# CREATE IMAGE BY SPECIFYING TARGET STAGE DURING BUILD
+
+
+# Production stage (minimal) - run only in production
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS production
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "UserManagement.API.dll"]
+
+# Development stage (fuller image with debugging tools) - run only in development
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS development
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "UserManagement.API.dll"]
