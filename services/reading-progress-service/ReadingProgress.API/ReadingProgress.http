@@ -1,9 +1,16 @@
 @baseUrl = https://localhost:7193/api/reading-progress
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMTRjMTM0YS04YmU3LTQ4OTgtYmRiYi0wNjM5N2Q0MWQxOWYiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJkaXNwbGF5TmFtZSI6InVwZGF0ZWQgdGVzdCB1c2VyIiwiZXhwIjoxNzY5OTA4NTE4LCJpc3MiOiJVc2VyTWFuYWdlbWVudEFQSSIsImF1ZCI6IlVzZXJNYW5hZ2VtZW50Q2xpZW50In0.GUGn_2mryYhJcbXEZP9MtJZWGUWfxqILY6KCqFsgC1w
+@authUrl = https://localhost:7100/api/auth
+@token = {{login.response.body.$.accessToken}}
 
-### Get test endpoint with token authorization
-GET {{baseUrl}}/test
-Authorization: Bearer {{token}}
+### Login User
+# @name login
+POST {{authUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test123!"
+}
 
 
 ### Add reading list
@@ -12,4 +19,13 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 {
   "ManhwaId": "123"
+}
+
+### Add reading progress event
+POST {{baseUrl}}/reading-progress-events
+Content-Type: application/json
+Authorization: Bearer {{token}}
+{
+  "ManhwaId": "456",
+  "ChapterNumber": 50
 }

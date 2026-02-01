@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace ReadingProgress.API.Features.ReadingLists
 {
-    public static class ReadingListsEndpoint
+    public static class ReadingListsEndpoints
     {
         public static RouteGroupBuilder MapReadingListsEndpoints(this RouteGroupBuilder group)
         {

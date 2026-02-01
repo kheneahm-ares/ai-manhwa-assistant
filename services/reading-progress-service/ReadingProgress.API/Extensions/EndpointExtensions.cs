@@ -1,5 +1,6 @@
 ﻿using ReadingProgress.API.Features;
 using ReadingProgress.API.Features.ReadingLists;
+using ReadingProgress.API.Features.ReadingProgressEvents;
 
 namespace ReadingProgress.API.Extensions
 {
@@ -15,6 +16,9 @@ namespace ReadingProgress.API.Extensions
 
             var readingLists = readingProgress.MapGroup("/reading-lists");
             readingLists.MapReadingListsEndpoints().RequireAuthorization("RequireUser");
+
+            var readingProgressEvents = readingProgress.MapGroup("/reading-progress-events");
+            readingProgressEvents.MapReadingProgressEventsEndpoints().RequireAuthorization("RequireUser");
 
             return app;
         }
