@@ -29,9 +29,10 @@ namespace UserManagement.API.Features.Auth
         {
             var claims = new[]
             {
-                new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new System.Security.Claims.Claim("displayName", user.DisplayName)
+
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);

@@ -5,7 +5,7 @@
       "Group": "Development",
       "Host": "db",
       "Port": 5432,
-      "MaintenanceDB": "manhwa-assistant-usermanagement",
+      "MaintenanceDB": "postgres",
       "Username": "devuser",
       "SSLMode": "prefer",
       "PassFile": "/pgpass"

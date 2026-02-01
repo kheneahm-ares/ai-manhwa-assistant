@@ -30,7 +30,7 @@ namespace UserManagement.API.Extensions
                 .AddDefaultTokenProviders();
 
             services.AddAuthServices(configuration);
-            services.AddRegisterationExtensions(configuration);
+            services.AddRegistrationServices(configuration);
 
             return services;
         }
