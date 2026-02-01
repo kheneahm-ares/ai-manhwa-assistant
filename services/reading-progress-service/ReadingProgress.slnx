@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ReadingProgress.API/ReadingProgress.API.csproj" />
+  <Project Path="ReadingProgress.Data/ReadingProgress.Data.csproj" Id="e3cf93fa-67e1-470f-b283-4ac790114dd1" />
+</Solution>
