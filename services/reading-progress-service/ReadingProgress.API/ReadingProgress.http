@@ -18,7 +18,16 @@ POST {{baseUrl}}/reading-lists
 Content-Type: application/json
 Authorization: Bearer {{token}}
 {
-  "ManhwaId": "123"
+  "ManhwaId": "1234"
+}
+
+### Update Reading list
+PUT {{baseUrl}}/reading-lists
+Content-Type: application/json
+Authorization: Bearer {{token}}
+{
+  "ManhwaId": "1234",
+  "Status": 1
 }
 
 ### Add reading progress event

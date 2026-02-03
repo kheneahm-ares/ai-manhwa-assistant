@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReadingProgress.API.Features.ReadingProgressEvents.DTOs;
+using ReadingProgress.API.Features.Shared;
 using System.Security.Claims;
 
 namespace ReadingProgress.API.Features.ReadingProgressEvents
@@ -25,7 +26,7 @@ namespace ReadingProgress.API.Features.ReadingProgressEvents
             }
 
             var result = await service.AddReadingProgressEvent(userId, request.ManhwaId, request.ChapterNumber);
-            return result ? Results.Created() : Results.BadRequest();
+            return result.ToHttp();
         }
     }
 }

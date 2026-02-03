@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReadingProgress.API.Features.Shared;
 using ReadingProgress.Data;
 using ReadingProgress.Data.Models;
 
@@ -14,14 +15,14 @@ namespace ReadingProgress.API.Features.ReadingLists
         }
 
         // add new reading list
-        public async Task<bool> AddReadingList(string userId, string manhwaId)
+        public async Task<ServiceResult> AddReadingList(string userId, string manhwaId)
         {
 
             // check if exists, if so just return true
             var existing = await _dbContext.ReadingLists
                 .FirstOrDefaultAsync(rl => rl.UserId == userId && rl.ManhwaId == manhwaId);
 
-            if (existing != null) return true;
+            if (existing != null) return ServiceResult.Failure("Reading List exists", ErrorType.BadRequest);
 
             var readingList = new ReadingList
             {
@@ -35,8 +36,49 @@ namespace ReadingProgress.API.Features.ReadingLists
 
             var result = await _dbContext.SaveChangesAsync();
 
-            return result > 0;
+            var serviceResult = new ServiceResult
+            {
+                IsSuccess = result > 0
+            };
 
+            return serviceResult;
+
+        }
+
+        public async Task<ServiceResult> UpdateReadingList(string userId, string manhwaId, ReadingStatus status)
+        {
+            var existing = await _dbContext.ReadingLists
+                            .FirstOrDefaultAsync(rl => rl.UserId == userId && rl.ManhwaId == manhwaId);
+
+
+            // if not exists 
+            if (existing == null) return ServiceResult.Failure("Reading List does not exist", ErrorType.NotFound);
+            // if no change, return success
+            if (existing.Status == status)
+            {
+                return new ServiceResult { IsSuccess = true };
+            }
+
+            if (status == ReadingStatus.Completed)
+            {
+                existing.CompletedDate = DateTime.UtcNow;
+            }
+
+            // if changing from completed to something else, remove completed date
+            if (existing.Status == ReadingStatus.Completed && status != ReadingStatus.Completed)
+            {
+                existing.CompletedDate = null;
+            }
+
+            existing.Status = status;
+            var result = await _dbContext.SaveChangesAsync();
+
+            var serviceResult = new ServiceResult
+            {
+                IsSuccess = result > 0
+            };
+
+            return serviceResult;
         }
     }
 }
