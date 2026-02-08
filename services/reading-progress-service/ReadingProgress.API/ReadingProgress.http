@@ -12,6 +12,11 @@ Content-Type: application/json
   "password": "Test123!"
 }
 
+### Get reading list for user
+GET {{baseUrl}}/reading-lists
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
 
 ### Add reading list
 POST {{baseUrl}}/reading-lists
@@ -36,5 +41,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 {
   "ManhwaId": "456",
-  "ChapterNumber": 50
+  "ChapterNumber": 49
 }
+
+

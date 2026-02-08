@@ -16,7 +16,22 @@ namespace ReadingProgress.API.Features.ReadingLists
             // Update Reading List (PUT)
             group.MapPut("/", UpdateReadingList);
 
+            // Get Reading List (GET)
+            group.MapGet("/", GetReadingList);
+
             return group;
+        }
+
+        private static async Task<IResult> GetReadingList([FromServices] ReadingListsService service, ClaimsPrincipal userClaims)
+        {
+            //get user id from sub/nameidentifier claim
+            var userId = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+            var result = await service.GetReadingList(userId);
+            return result.ToHttp();
         }
 
         private static async Task<IResult> AddReadingList([FromServices] ReadingListsService service,

@@ -20,5 +20,22 @@ namespace ReadingProgress.API.Features.Shared
                 _ => Results.StatusCode(500)
             };
         }
+
+        public static IResult ToHttp<T>(this ServiceResult<T> result)
+        {
+            if (result.IsSuccess)
+            {
+                return Results.Ok(result.Data);
+            }
+
+            return result.ErrorType switch
+            {
+                ErrorType.NotFound => Results.NotFound(result.ErrorMessage),
+                ErrorType.BadRequest => Results.BadRequest(result.ErrorMessage),
+                ErrorType.Conflict => Results.Conflict(result.ErrorMessage),
+                ErrorType.Unauthorized => Results.Unauthorized(),
+                _ => Results.StatusCode(500)
+            };
+        }
     }
 }

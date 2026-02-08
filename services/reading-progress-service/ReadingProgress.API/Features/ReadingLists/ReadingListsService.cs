@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReadingProgress.API.Features.ReadingLists.DTOs;
 using ReadingProgress.API.Features.Shared;
 using ReadingProgress.Data;
 using ReadingProgress.Data.Models;
@@ -12,6 +13,25 @@ namespace ReadingProgress.API.Features.ReadingLists
         public ReadingListsService(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<ServiceResult<List<GetReadingList>>> GetReadingList(string userId)
+        {
+            var userReadingLists = await _dbContext.ReadingLists
+                .Where(rl => rl.UserId == userId)
+                .ToListAsync();
+
+            var response = userReadingLists.Select(rl => new GetReadingList 
+            {
+                ManhwaId = rl.ManhwaId,
+                StartDate = rl.StartDate,
+                CompletedDate = rl.CompletedDate,
+                Score = rl.Score,
+                Status = rl.Status
+            }).ToList();
+
+            return ServiceResult<List<GetReadingList>>.Success(response);
+
         }
 
         // add new reading list
