@@ -1,6 +1,7 @@
 import { Form, useActionData, redirect, Link } from 'react-router';
 import type { Route } from './+types/login';
 import { createSessionCookie, getSession } from '~/services/auth.server';
+import { userManagementService } from '~/services/user-management.server';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -18,23 +19,21 @@ export async function action({ request }: Route.ActionArgs) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const response = await fetch(`${process.env.USER_SERVICE_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
+  try {
+    const { accessToken } = await userManagementService.auth.login({
+      email,
+      password,
+    });
 
-  if (!response.ok) {
+    return redirect('/home', {
+      headers: {
+        'Set-Cookie': createSessionCookie(accessToken),
+      },
+    });
+  } catch (error) {
+    console.log('❌ Login failed:', error); // DEBUG
     return { error: 'Invalid credentials' };
   }
-
-  const { accessToken } = await response.json();
-
-  return redirect('/home', {
-    headers: {
-      'Set-Cookie': createSessionCookie(accessToken),
-    },
-  });
 }
 
 export default function Login({ actionData }: Route.ComponentProps) {

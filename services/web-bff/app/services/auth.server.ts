@@ -2,10 +2,11 @@ import { redirect } from 'react-router';
 import * as cookie from 'cookie';
 import { jwtVerify } from 'jose'; // Use jose for JWT verification
 
-interface SessionUser {
+export interface SessionUser {
   id: string;
   email: string;
   displayName: string;
+  token: string;
 }
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -36,6 +37,7 @@ export async function getSession(request: Request): Promise<SessionUser | null> 
       id: payload.sub as string,
       email: payload.email as string,
       displayName: payload.displayName as string,
+      token: token,
     };
   } catch (error) {
     console.log('❌ JWT verification failed:', error); // DEBUG

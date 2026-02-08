@@ -1,6 +1,7 @@
 import { Form, useActionData, redirect } from 'react-router';
 import type { Route } from './+types/register';
 import { createSessionCookie, getSession } from '~/services/auth.server';
+import { userManagementService } from '~/services/user-management.server';
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -20,26 +21,22 @@ export async function action({ request }: Route.ActionArgs) {
   const password = formData.get('password') as string;
   const displayName = formData.get('displayName') as string;
 
-  // Call User Management Service
-  const response = await fetch(`${process.env.USER_SERVICE_URL}/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, displayName }),
-  });
+  try {
+    const { accessToken } = await userManagementService.auth.register({
+      email,
+      password,
+      displayName,
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    return { error: error.message || 'Registration failed' };
+    // Auto-login after registration
+    return redirect('/home', {
+      headers: {
+        'Set-Cookie': createSessionCookie(accessToken),
+      },
+    });
+  } catch (error) {
+    return { error: 'Registration failed. Please try again.' };
   }
-
-  const { accessToken } = await response.json();
-
-  // Auto-login after registration
-  return redirect('/home', {
-    headers: {
-      'Set-Cookie': createSessionCookie(accessToken),
-    },
-  });
 }
 
 export default function Register({ actionData }: Route.ComponentProps) {
